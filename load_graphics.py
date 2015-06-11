@@ -19,6 +19,6 @@ def load(screen):
 
 	for i in range(1, 7):
 		raw_tile = image.load("block"+str(i)+".png")
-		tile.append(raw_tile.convert_alpha(screen))
+		tile.append(raw_tile.convert(screen))
 
 	return tile
