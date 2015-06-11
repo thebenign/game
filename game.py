@@ -159,7 +159,7 @@ class GameRunner():
 		for obj in self.obj:
 			screen.blit(obj.img, (math.floor(obj.x), math.floor(obj.y)))
 
-		screen.blit(self.text,(0,0))
+		screen.blit(self.text,(0,0), None, pygame.BLEND_ADD)
 		pygame.display.flip()
 
 
