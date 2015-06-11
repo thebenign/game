@@ -58,6 +58,8 @@ class GameRunner():
 		self.time = 0
 		self.dt = 0
 
+		self.blend = 0
+
 	def handleKeys(self,obj):
 		"""
 			This moves the things. Arrow keys move the objects around.
@@ -146,6 +148,9 @@ class GameRunner():
 					sys.exit()
 				if event.type == USEREVENT+1:
 					pygame.display.set_caption("FPS: "+str(math.floor(self.clock.get_fps())))
+				if event.type == pygame.KEYUP:
+					if event.key == pygame.K_t:
+						self.blend = (self.blend + 1)%2
 
 	def display(self):
 		"""
@@ -157,7 +162,7 @@ class GameRunner():
 		screen.fill(self.black)
 
 		for obj in self.obj:
-			screen.blit(obj.img, (obj.x-(obj.x%1), obj.y-(obj.y%1)), None, BLEND_ADD)
+			screen.blit(obj.img, (obj.x-(obj.x%1), obj.y-(obj.y%1)), special_flags = self.blend)
 
 		screen.blit(self.text,(0,0))
 		pygame.display.flip()
