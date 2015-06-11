@@ -157,7 +157,7 @@ class GameRunner():
 		screen.fill(self.black)
 
 		for obj in self.obj:
-			screen.blit(obj.img, (math.floor(obj.x), math.floor(obj.y)), None, pygame.BLEND_ADD)
+			screen.blit(obj.img, (obj.x-(obj.x%1), obj.y-(obj.y%1)), None, BLEND_ADD)
 
 		screen.blit(self.text,(0,0))
 		pygame.display.flip()
