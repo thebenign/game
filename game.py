@@ -1,5 +1,5 @@
 
-import sys, pygame, math, random
+import sys, pygame, math, random, os
 from pygame.locals import *
 from pygame import font
 import load_graphics
@@ -38,7 +38,7 @@ class Mob():
     def __init__(self):
         self.x, self.y = random.random()*800, random.random()*600
         self.dx, self.dy = 0, 0 # Delta x and y. this is the character's movement over time.
-        self.friction = .2
+        self.friction = .25
 
     def doFriction(self):
         try:
@@ -47,7 +47,7 @@ class Mob():
             dx_norm = 0
         try:
             dy_norm = self.dy / abs(self.dy)
-        except:
+        except ZeroDivisionError:
             dy_norm = 0
 
 
@@ -128,7 +128,7 @@ class GameRunner():
     def __init__(self):
 
         self.obj = []
-        self.obj.append(Hero(mob_img["candle1"], 128, 128))
+        self.obj.append(Hero(mob_img["cand"], 128, 128))
 
         camera.follow(self.obj[0])
 
@@ -183,8 +183,7 @@ class GameRunner():
 
         """
         key = pygame.key.get_pressed()
-        if key[K_SPACE]:
-            self.obj.append(Hero(mob_img["candle"]))
+
         if key[K_BACKSPACE]:
             if len(self.obj) > 0:
                 _ = self.obj.pop()
@@ -255,7 +254,7 @@ class GameRunner():
         cam_y = camera.y
 
         screen.fill(self.black)
-
+        map1.draw(screen)
         for obj in self.obj:
             screen.blit(obj.img, (obj.x-(obj.x%1) - cam_x, obj.y-(obj.y%1) - cam_y), special_flags = self.blend)
 
@@ -270,10 +269,11 @@ class GameRunner():
             
 
 class Map():
-    def __init__(self, map_data={}, layer_data=[], tile_data=[]):
+    def __init__(self, map_data={}, layer_data=[], tile_data=[], tile_img = {}):
         self.map_data = map_data
         self.layer_data = layer_data
         self.tile_data = tile_data
+        self.tile_img = tile_img
         
     @classmethod
     def LoadJSON(cls, file_name):
@@ -283,17 +283,29 @@ class Map():
 
         for key, val in map_dict.items():
             if key == "layers":
-                layer_data[key] = val
+                layer_data = val
             elif key == "tilesets":
-                tile_data[key] = val
-                load_graphics.load_tiles(tile_data)
+                tile_data = val
+                tile_img = load_graphics.load_tiles(screen, tile_data)
             else:
                 map_data[key] = val
 
-        return cls(map_data, layer_data, tile_data)
+        return cls(map_data, layer_data, tile_data, tile_img)
+
+    def draw(self, surf):
+        w = self.map_data["width"]
+        h = self.map_data["height"]
+        tw = self.map_data["tilewidth"]
+        th = self.map_data["tileheight"]
+
+        for i in range(0, w * h):
+                x = (i%w) * tw - camera.x
+                y = math.floor(i/w) * th - camera.y
+                surf.blit(self.tile_img["0"],(x,y))
 
 
 map1 = Map.LoadJSON("map/map.json")
+
 camera = Camera()
 game = GameRunner()
 

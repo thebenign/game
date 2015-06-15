@@ -28,7 +28,6 @@ def load_mobs(screen, dir):
 	path = os.path.dirname(os.path.abspath(__file__))+"/graphics"
 	files = os.listdir(path)
 	mob_graphics = {}
-	print (files)
 
 	for f in files:
 		asset = image.load("graphics/"+f).convert_alpha(screen)
@@ -37,12 +36,15 @@ def load_mobs(screen, dir):
 
 	return mob_graphics
 
-def load_tiles(tiles_dict):
+def load_tiles(screen, set_list):
 	"""
 		Loads tiles from the tiles dictionary extracted from
 		a map JSON.
 	"""
-	tile = []
+	tile = {}
 
-	#for 
+	for sets in set_list:
+		for key, val in sets["tiles"].items():
+			tile[key] = image.load(val["image"]).convert(screen)
+
 	return tile
